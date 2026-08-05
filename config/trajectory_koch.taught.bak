@@ -1,0 +1,90 @@
+joint_names:
+- shoulder_pan
+- shoulder_lift
+- elbow_flex
+- wrist_flex
+- wrist_roll
+- gripper
+limits:
+  joint_limits_deg:
+    shoulder_pan:
+    - -90
+    - 90
+    shoulder_lift:
+    - -90
+    - 45
+    elbow_flex:
+    - -10
+    - 120
+    wrist_flex:
+    - -90
+    - 90
+    wrist_roll:
+    - -180
+    - 180
+    gripper:
+    - 0
+    - 40
+  max_joint_velocity_deg_s: 30.0
+  max_step_delta_deg: 3.0
+  segment_timeout_s: 8.0
+  gripper_locked_open: true
+  gripper_open_value_deg: 30
+segments:
+  HOME:
+    target_deg:
+    - 0.57
+    - -60.79
+    - -54.77
+    - -73.32
+    - 12.44
+    - 3.94
+    duration_s: 2.0
+  APPROACH:
+    target_deg:
+    - -0.13
+    - -52.79
+    - -14.95
+    - -40.44
+    - 7.87
+    - 3.94
+    duration_s: 2.5
+  HANDSHAKE_UP:
+    target_deg:
+    - -0.66
+    - -43.03
+    - -11.52
+    - -7.21
+    - 4.18
+    - 37.83
+    duration_s: 0.8
+  HANDSHAKE_DOWN:
+    target_deg:
+    - -0.48
+    - -43.3
+    - -12.66
+    - -42.81
+    - 4.26
+    - 37.73
+    duration_s: 0.8
+  RETRACT:
+    target_deg:
+    - -0.31
+    - -48.4
+    - -38.15
+    - -82.46
+    - 13.05
+    - 4.24
+    duration_s: 2.5
+sequence:
+  approach:
+  - APPROACH
+  handshake:
+  - HANDSHAKE_UP
+  - HANDSHAKE_DOWN
+  - HANDSHAKE_UP
+  - HANDSHAKE_DOWN
+  retract:
+  - RETRACT
+  - HOME
+_note: 本文件由 robot_teach.py 在真机上手动示教生成，target_deg 为真实采集值。

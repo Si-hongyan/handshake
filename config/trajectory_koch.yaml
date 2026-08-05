@@ -1,0 +1,90 @@
+joint_names:
+- shoulder_pan
+- shoulder_lift
+- elbow_flex
+- wrist_flex
+- wrist_roll
+- gripper
+limits:
+  joint_limits_deg:
+    shoulder_pan:
+    - -10.7
+    - 10.6
+    shoulder_lift:
+    - -70.8
+    - -33.0
+    elbow_flex:
+    - -64.8
+    - -1.5
+    wrist_flex:
+    - -92.5
+    - 2.8
+    wrist_roll:
+    - -5.8
+    - 23.1
+    gripper:
+    - 0.0
+    - 45.0
+  max_joint_velocity_deg_s: 30.0
+  max_step_delta_deg: 5.0
+  segment_timeout_s: 8.0
+  gripper_locked_open: true
+  gripper_open_value_deg: 35.0
+segments:
+  HOME:
+    target_deg:
+    - 0.57
+    - -60.79
+    - -54.77
+    - -73.32
+    - 12.44
+    - 38.0
+    duration_s: 2.0
+  APPROACH:
+    target_deg:
+    - -0.13
+    - -52.79
+    - -14.95
+    - -40.44
+    - 7.87
+    - 38.0
+    duration_s: 2.5
+  HANDSHAKE_UP:
+    target_deg:
+    - -0.66
+    - -43.03
+    - -11.52
+    - -7.21
+    - 4.18
+    - 38.0
+    duration_s: 1.8
+  HANDSHAKE_DOWN:
+    target_deg:
+    - -0.48
+    - -43.3
+    - -12.66
+    - -42.81
+    - 4.26
+    - 38.0
+    duration_s: 1.8
+  RETRACT:
+    target_deg:
+    - -0.31
+    - -48.4
+    - -38.15
+    - -82.46
+    - 13.05
+    - 38.0
+    duration_s: 2.5
+sequence:
+  approach:
+  - APPROACH
+  handshake:
+  - HANDSHAKE_UP
+  - HANDSHAKE_DOWN
+  - HANDSHAKE_UP
+  - HANDSHAKE_DOWN
+  retract:
+  - RETRACT
+  - HOME
+_note: 真机示教生成并经安全修正:夹爪锁定张开(38),软限位按实测±10°,握手放慢至1.8s。原始示教值见 .taught.bak | 夹爪软限位=物理全程[0,45];闭合防护由段目标校验(gripper_locked_open,target>=35)保证。

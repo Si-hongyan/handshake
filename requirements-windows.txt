@@ -1,0 +1,6 @@
+# Windows 侧（原生 Python，负责摄像头 + MediaPipe + UDP 发送）
+# 在 Windows 上创建 venv 后安装：  pip install -r requirements-windows.txt
+opencv-python>=4.8,<5
+mediapipe>=0.10.9,<0.11
+numpy>=1.24,<2
+PyYAML>=6.0

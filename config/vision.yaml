@@ -1,0 +1,40 @@
+# 视觉判定与稳定性阈值（Windows 侧使用；部分被 WSL 状态机复用）
+
+camera:
+  index: 0            # Windows 摄像头设备号（0 = 默认摄像头）
+  width: 640
+  height: 480
+  target_fps: 30
+
+mediapipe:
+  # MediaPipe Tasks HandLandmarker 模型文件（.task）。
+  # 首次使用需自行下载到该路径（见 README）。相对路径基于项目根。
+  model_path: "models/hand_landmarker.task"
+  running_mode: "LIVE_STREAM"   # 异步、低延迟，避免帧堆积
+  num_hands: 1
+  min_hand_detection_confidence: 0.5
+  min_hand_presence_confidence: 0.5
+  min_tracking_confidence: 0.5
+
+open_palm:
+  # 判定“张开手掌”：伸直的手指数量 >= 该阈值即视为张开。
+  # 四指(食/中/无名/小)用 tip 到 wrist 距离 > pip 到 wrist 距离 判断伸直。
+  min_extended_fingers: 4
+  # 是否把拇指也计入（拇指判据不同，默认不计，只看四指）。
+  include_thumb: false
+
+stable_gesture:
+  # 触发前需要连续稳定满足条件的时长（秒）。范围 0.5~1.0。
+  dwell_seconds: 0.7
+  # 允许的瞬时抖动容忍：在 dwell 窗口内允许的最大“坏帧”比例。
+  max_bad_frame_ratio: 0.2
+
+latency:
+  # 单帧处理延迟上限（毫秒）。超过则 frame_latency_ok=false。
+  max_frame_latency_ms: 150
+  # camera_alive 判定：距上一有效帧超过该时长(秒)即认为摄像头异常。
+  camera_alive_timeout_s: 0.5
+
+confidence:
+  # 低于该置信度的手部检测直接丢弃（视为未检测到手）。
+  min_detection_confidence: 0.5

@@ -1,0 +1,56 @@
+# 预示教握手轨迹（阶段一：占位/仿真用，不含真实标定角度）
+#
+# 重要安全约束：
+#   - 关节角度不硬编码在代码里，全部放这里。
+#   - 本文件的 waypoints 为“占位示例”，仅供 Mock 仿真打印与插值演示。
+#   - 真机使用前，必须用 LeRobot 对具体机械臂(Koch / SO-101)重新示教并校准，
+#     且 Koch 与 SO-101 不共用同一套校准（见 README 差异说明）。
+#
+# 动作序列（状态机固定顺序，不由模型生成）：
+#   HOME -> APPROACH -> HANDSHAKE_UP -> HANDSHAKE_DOWN
+#        -> HANDSHAKE_UP -> HANDSHAKE_DOWN -> RETRACT -> HOME
+
+# 关节名（示例，按 6 自由度 + 夹爪；真机以 LeRobot 读到的为准）。
+joint_names: ["shoulder_pan", "shoulder_lift", "elbow_flex", "wrist_flex", "wrist_roll", "gripper"]
+
+# 安全限制（robot_controller 强制执行；阶段一 Mock 也校验）。
+limits:
+  # 每个关节软限位 [min, max]，单位：度。占位值，真机须按实测收紧。
+  joint_limits_deg:
+    shoulder_pan:  [-90, 90]
+    shoulder_lift: [-90, 45]
+    elbow_flex:    [-10, 120]
+    wrist_flex:    [-90, 90]
+    wrist_roll:    [-180, 180]
+    gripper:       [0, 40]        # 阶段一：夹爪保持张开，禁止闭合(见 gripper_locked)
+  max_joint_velocity_deg_s: 30.0   # 速度上限（低速）
+  max_step_delta_deg: 3.0          # 单个控制步关节变化上限
+  segment_timeout_s: 8.0           # 单段动作超时
+  # 阶段一强制：夹爪锁定为张开，任何试图闭合的指令都被拒绝（安全第13/15条）。
+  gripper_locked_open: true
+  gripper_open_value_deg: 30
+
+# 每段动作：目标位姿(关节角，度) + 期望时长(秒)。控制器在段内做插值。
+# 这些是占位数值，仅用于仿真流程验证，切勿直接下发真机。
+segments:
+  HOME:
+    target_deg:   [0, -30, 60, 0, 0, 30]
+    duration_s:   2.0
+  APPROACH:
+    target_deg:   [10, -10, 70, -20, 0, 30]
+    duration_s:   2.5
+  HANDSHAKE_UP:
+    target_deg:   [10, -5, 72, -10, 0, 30]
+    duration_s:   0.8
+  HANDSHAKE_DOWN:
+    target_deg:   [10, -15, 72, -30, 0, 30]
+    duration_s:   0.8
+  RETRACT:
+    target_deg:   [0, -30, 60, 0, 0, 30]
+    duration_s:   2.5
+
+# 完整握手动作的段顺序（状态机据此驱动）。
+sequence:
+  approach: ["APPROACH"]
+  handshake: ["HANDSHAKE_UP", "HANDSHAKE_DOWN", "HANDSHAKE_UP", "HANDSHAKE_DOWN"]
+  retract:  ["RETRACT", "HOME"]

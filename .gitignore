@@ -1,0 +1,10 @@
+__pycache__/
+*.pyc
+.venv/
+venv/
+logs/
+models/*.task
+*.tmp
+.claude/
+cd
+pip

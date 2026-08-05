@@ -1,0 +1,26 @@
+# localhost 传输配置（阶段一：Windows 视觉 -> WSL 状态机）
+#
+# 传输层：UDP，只发送“最新视觉状态”，天然丢弃旧帧，避免积压。
+# WSL2 与 Windows 共享 localhost：
+#   - WSL 侧 receiver 绑定 0.0.0.0:<port>
+#   - Windows 侧 sender 发往 127.0.0.1:<port>
+#   （WSL2 的 localhost 转发会把 Windows 的 127.0.0.1:<port> 送达 WSL 监听端口）
+
+udp:
+  # WSL 接收端绑定地址。0.0.0.0 保证既能收本机也能收 Windows 侧 localhost 转发。
+  bind_host: "0.0.0.0"
+  # Windows 发送端目标地址。默认 127.0.0.1（localhost）。
+  send_host: "127.0.0.1"
+  port: 51555
+  # 单个数据报最大字节（视觉状态 JSON 很小，1KB 足够）。
+  max_datagram_bytes: 2048
+
+# 接收端如果超过该时长没有收到任何视觉状态，判定视觉链路超时 -> 触发 STOP。
+# 单位：秒。用于 watchdog（安全要求第 4 条：视觉结果超时后停止）。
+vision_timeout_s: 0.5
+
+# 启动宽限期：程序刚启动、尚未收到任何视觉数据时，不立即判超时。
+# 目的：避免 sim 先于视觉端启动就直接 STOP。收到第一帧后，此宽限失效，
+# 之后一旦“曾经在线又丢失”，仍会立刻按 vision_timeout_s 触发安全动作。
+# 单位：秒。
+startup_grace_s: 5.0
