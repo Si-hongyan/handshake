@@ -1,15 +1,13 @@
-# Handshake Demo — 阶段一（视觉触发 → 固定握手动作，仿真）
+# Handshake Demo 
 
-一个**可验证、低风险**的握手 Demo。第一阶段只验证：
-**摄像头识别“张开手掌进入握手区并稳定” → 触发机械臂固定动作序列**（本阶段用 Mock 仿真，不接机械臂）。
+一个**可验证、低风险**的握手 Demo。
 
 动作序列（固定、预定义，不由模型生成）：
 `HOME → APPROACH → HANDSHAKE_UP → HANDSHAKE_DOWN → HANDSHAKE_UP → HANDSHAKE_DOWN → RETRACT → HOME`
 
 ---
 
-## 架构（阶段一）
-
+## 架构
 ```
 ┌──────── Windows 原生 Python ────────┐   UDP    ┌──────── WSL2 Ubuntu ────────┐
 │ camera(只留最新帧)                   │ 最新状态  │ receiver(只留最新)            │
